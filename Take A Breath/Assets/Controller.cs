@@ -10,30 +10,41 @@ public class Controller : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.C))
+        if (!GameMaster.Instance().ifTakingControl)
         {
-            breathSys.ChangeBreath();
-        }
-
-        if (Input.GetKey(KeyCode.Space))
-        {
-            if(breathSys.breathTime < 1)
+            if (Input.GetKeyDown(KeyCode.C))
             {
-                breathSys.breathTime += Time.deltaTime;
+                breathSys.ChangeBreath();
+            }
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                enemy.Think();
+            }
+
+            if (Input.GetKey(KeyCode.Space))
+            {
+                if (breathSys.breathTime < 1)
+                {
+                    breathSys.breathTime += Time.deltaTime;
+                }
+                else
+                {
+                    breathSys.breathTime = 0;
+                    if (!breathSys.underAttack)
+                    {
+                        breathSys.ChangeBreathPt(1);
+                    }
+                    enemy.Think();
+                }
             }
             else
             {
-                breathSys.breathTime = 0;
-                breathSys.AddBreathPt();
-                enemy.Think();
+                if (breathSys.breathTime < 1)
+                {
+                    breathSys.breathTime = 0;
+                }
             }
         }
-        else
-        {
-            if(breathSys.breathTime < 1)
-            {
-                breathSys.breathTime = 0;
-            }
-        }
+        
     }
 }

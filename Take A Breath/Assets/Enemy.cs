@@ -10,9 +10,15 @@ public class Enemy : MonoBehaviour
 
     public void Awake()
     {
-        int randomPosX = Random.Range(-3, 3);
-        transform.position = new Vector3(randomPosX, 3, 0); 
+        GenerateInitialPositionRandomly();
     }
+
+    public void GenerateInitialPositionRandomly()
+    {
+        int randomPosX = Random.Range(-3, 3);
+        transform.position = new Vector3(randomPosX, 3, 0);
+    }
+
     public void Move()
     {
         int randomIndex = Random.Range(0,2);
@@ -28,7 +34,6 @@ public class Enemy : MonoBehaviour
             else
             {
                 transform.position += Vector3.right;
-
             }
 
         }
@@ -55,7 +60,9 @@ public class Enemy : MonoBehaviour
     public void Attack()
     {
         Debug.Log("Player lose 1 HP");
-        //breathSys.
+        breathSys.ChangeBreathPt(-1);
+        breathSys.underAttack = true;
+        breathSys.DetectOutOfBreath();
     }
 
     public void DetectPlayerAfterMove()

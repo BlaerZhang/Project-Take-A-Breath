@@ -13,6 +13,8 @@ public class BreathSys : MonoBehaviour
 
     public BreathDataContainer breathDataSCO;
 
+    public bool underAttack = false;
+
     private void Awake()
     {
         SettingDefault();
@@ -64,23 +66,10 @@ public class BreathSys : MonoBehaviour
         breathUIs[index].breathHu.gameObject.SetActive(true);
     }
 
-    public void AddBreathPt()
+    public void ChangeBreathPt(int changeValue)
     {
-        if(activeBreathIndex == 0)
-        {
-            breathDataSCO.firePt += 1;
-        }
-        else if(activeBreathIndex == 1)
-        {
-            breathDataSCO.waterPt += 1;
-        }
-        else if(activeBreathIndex == 2)
-        {
-            breathDataSCO.bugPt += 1;
-        }
-
+        DetectOrChangeCurrentBreathPt(changeValue);
         UpdateBreathPtUI();
-
     }
 
     public void UpdateBreathPtUI()
@@ -88,5 +77,36 @@ public class BreathSys : MonoBehaviour
         breathUIs[0].breathIntUI.text = breathDataSCO.firePt.ToString();
         breathUIs[1].breathIntUI.text = breathDataSCO.waterPt.ToString();
         breathUIs[2].breathIntUI.text = breathDataSCO.bugPt.ToString();
+    }
+
+    public int DetectOrChangeCurrentBreathPt(int changeValue = 0)
+    {
+        Debug.Log("value   " + changeValue);
+        if (activeBreathIndex == 0)
+        {
+            breathDataSCO.firePt += changeValue;
+            return breathDataSCO.firePt;
+        }
+        else if (activeBreathIndex == 1)
+        {
+            breathDataSCO.waterPt += changeValue;
+            return breathDataSCO.waterPt;
+        }
+        else if (activeBreathIndex == 2)
+        {
+            breathDataSCO.bugPt += changeValue;
+            return breathDataSCO.bugPt;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    public void DetectOutOfBreath()
+    {
+        if(DetectOrChangeCurrentBreathPt() == 0)
+        {
+            GameMaster.Instance().ifLose = true;
+        }
     }
 }
