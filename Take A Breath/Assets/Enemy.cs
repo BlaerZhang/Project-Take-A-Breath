@@ -49,40 +49,90 @@ public class Enemy : MonoBehaviour
 
     public void Move()
     {
-        int randomIndex = Random.Range(0,2);
-        if(randomIndex == 0)
-        {
-            Debug.Log("Enemy Move hor");
-            float horizontalGap = transform.position.x - player.transform.position.x;
+        float horizontalGap = transform.position.x - player.transform.position.x;
+        float verticalGap = transform.position.y - player.transform.position.y;
+        Vector3 destination = new Vector3();
 
-            if(horizontalGap > 0)
+
+        if (horizontalGap == 0)
+        {
+            if (verticalGap > 0)
             {
-                transform.position += Vector3.left;
+                destination = transform.position + Vector3.down;
             }
             else
             {
-                transform.position += Vector3.right;
+                destination = transform.position + Vector3.up;
             }
-
+        }
+        else if(verticalGap == 0)
+        {
+            if (horizontalGap > 0)
+            {
+                destination = transform.position + Vector3.left;
+            }
+            else
+            {
+                destination = transform.position + Vector3.right;
+            }
         }
         else
         {
-            Debug.Log("Enemy Move ver");
-
-            float verticalGap = transform.position.y - player.transform.position.y;
-
-            if(verticalGap > 0)
+            int randomIndex = Random.Range(0, 2);
+            if (randomIndex == 0)
             {
-                transform.position += Vector3.down;
+                Debug.Log("Enemy Move hor");
+
+                if (horizontalGap > 0)
+                {
+                    destination = transform.position + Vector3.left;
+                }
+                else
+                {
+                    destination = transform.position + Vector3.right;
+                }
+
             }
             else
             {
-                transform.position += Vector3.up;
-            }
+                Debug.Log("Enemy Move ver");
 
+
+                if (verticalGap > 0)
+                {
+                    destination = transform.position + Vector3.down;
+                }
+                else
+                {
+                    destination = transform.position + Vector3.up;
+                }
+
+            }
         }
-        
+
+        if (DetectIfOverlap(destination))
+        {
+            Move();
+        }
+        else
+        {
+            transform.position = destination;
+        }
+
         DetectPlayerAfterMove();
+    }
+
+    public bool DetectIfOverlap(Vector3 destination)
+    {
+        foreach(Enemy other in gM.enemySys.enemiesInScene)
+        {
+            if(other.transform.position == destination)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public void Attack()

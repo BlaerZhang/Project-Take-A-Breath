@@ -45,7 +45,8 @@ public class Controller : MonoBehaviour
                         gM.breathSys.underAttack = false;
                     }
 
-                    //gM.enemySys.RandomlyRespawnEenmy();
+                    gM.enemySys.RandomlyRespawnEenmy();
+                    gM.breathScore += 1;
                 }
             }
             else

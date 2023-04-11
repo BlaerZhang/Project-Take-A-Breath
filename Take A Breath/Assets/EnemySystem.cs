@@ -31,7 +31,7 @@ public class EnemySystem : MonoBehaviour
     {
         Debug.Log("A new enemy is generated");
 
-        Enemy newEnemy = Instantiate(enemyPrefabs[GameMaster.Instance().level - 1]);
+        Enemy newEnemy = Instantiate(enemyPrefabs[0]);
         enemiesInScene.Add(newEnemy);
         OrganizeEnemiesInScene();
         newEnemy.transform.position = GetInitialPosition();
@@ -95,5 +95,6 @@ public class EnemySystem : MonoBehaviour
         {
             Destroy(unit.gameObject);
         }
+        enemiesInScene = new List<Enemy>();
     }
 }

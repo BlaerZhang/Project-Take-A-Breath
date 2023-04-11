@@ -80,7 +80,6 @@ public class BreathSys : MonoBehaviour
 
     public int DetectOrChangeCurrentBreathPt(int changeValue = 0)
     {
-        Debug.Log("value   " + changeValue);
         if (activeBreathIndex == 0)
         {
             breathDataSCO.firePt += changeValue;

@@ -29,10 +29,13 @@ public class SkillSys : MonoBehaviour
 
         }
 
-        if (FindObjectOfType<Enemy>().relativePosOfPL == faceDirection)
+        foreach(Enemy unit in GameMaster.Instance().enemySys.enemiesInScene)
         {
-            target = FindObjectOfType<Enemy>();
-            return true;
+            if (unit.relativePosOfPL == faceDirection)
+            {
+                target = unit;
+                return true;
+            }
         }
 
         return false;
@@ -53,6 +56,8 @@ public class SkillSys : MonoBehaviour
             target.GetAttackDmg(2);
             breathSys.breathDataSCO.firePt -= 1;
         }
+
+        breathSys.DetectOutOfBreath();
 
         breathSys.UpdateBreathPtUI();
     }

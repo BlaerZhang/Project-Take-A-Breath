@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class GameMaster : MonoBehaviour
 {
@@ -14,8 +15,10 @@ public class GameMaster : MonoBehaviour
     public bool ifTakingControl = false;
 
     public int level;
+    public int breathScore = 0;
 
     public GameObject loseUI;
+    public TextMeshProUGUI scoreTMP;
     public GameObject player;
 
     private void Awake()
@@ -26,7 +29,8 @@ public class GameMaster : MonoBehaviour
 
     public void GameStart()
     {
-        level = 1;
+        level = 10;
+        breathScore = 0;
         player.transform.position = Vector3.zero;
         enemySys.GenerateNewEnemy();
         breathSys.InitializeBreathPt();
@@ -60,6 +64,14 @@ public class GameMaster : MonoBehaviour
 
     private void Update()
     {
+        if(breathScore < 10)
+        {
+            scoreTMP.text = "<link=\"pulse\">" + "0" + breathScore.ToString() + "</link>";
+        }
+        else
+        {
+            scoreTMP.text = "<link=\"pulse\">" + breathScore.ToString() + "</link>";
+        }
         if (ifLose)
         {
             GameOverLose();
