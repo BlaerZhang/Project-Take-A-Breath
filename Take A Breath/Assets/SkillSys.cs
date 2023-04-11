@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class SkillSys : MonoBehaviour
@@ -7,6 +8,7 @@ public class SkillSys : MonoBehaviour
     public Enemy target;
     public Vector3 faceDirection;
     public BreathSys breathSys;
+    public GameObject bloodstain;
 
     public bool DetectEnemy(string direction)
     {
@@ -46,6 +48,7 @@ public class SkillSys : MonoBehaviour
         if (DetectEnemy(direction))
         {
             AttackWithBreath();
+            InstantiateBloodstain(direction);
         }
     }
 
@@ -70,5 +73,44 @@ public class SkillSys : MonoBehaviour
         breathSys.DetectOutOfBreath();
 
         breathSys.UpdateBreathPtUI();
+    }
+    
+    void InstantiateBloodstain(string direction)
+    {
+        GameObject obj = new GameObject();
+        float distance = Random.Range(2, 5);
+        obj = Instantiate(this.bloodstain);
+
+        switch (direction)
+        {
+            case "D":
+                obj.transform.position = Vector3.right * distance;
+                break;
+            
+            case"W":
+                obj.transform.position = Vector3.up * distance;
+                obj.transform.rotation = Quaternion.Euler(0,0,90);
+                break;
+            
+            case"A":
+                obj.transform.position = Vector3.left * distance;
+                obj.transform.rotation = Quaternion.Euler(0,0,180);
+                break;
+            
+            case"S":
+                obj.transform.position = Vector3.down * distance;
+                obj.transform.rotation = Quaternion.Euler(0,0,270);
+                break;
+        }
+    }
+
+    public void ClearBloods()
+    {
+        List<GameObject> bloodsInScene = GameObject.FindGameObjectsWithTag("Bloodstain").ToList();
+        foreach (GameObject bloodstain in bloodsInScene)
+        {
+            Destroy(bloodstain);
+        }
+        bloodsInScene = new List<GameObject>();
     }
 }

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using MoreMountains.Feedbacks;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -13,11 +14,18 @@ public class Enemy : MonoBehaviour
     public int healthPt;
     public TextMeshProUGUI healthTMpro;
     public int indexInScene;
+    private MMF_Player enemyWalkFeedback;
+    private MMF_Player hitEnemyFeedback;
+    private MMF_Player gotHitFeedback;
+
 
     public void Awake()
     {
         gM = GameMaster.Instance();
         player = gM.player;
+        enemyWalkFeedback = GameObject.Find("EnemyWalkFeedback").GetComponent<MMF_Player>();
+        hitEnemyFeedback = GameObject.Find("HitEnemyFeedback").GetComponent<MMF_Player>();
+        gotHitFeedback = GameObject.Find("GotHitFeedback").GetComponent<MMF_Player>();
     }
 
     public void GetAttackDmg(int dmg)
@@ -25,6 +33,7 @@ public class Enemy : MonoBehaviour
         healthPt -= dmg;
         UpdateHealthUI();
         DeathCheck();
+        hitEnemyFeedback.PlayFeedbacks();
     }
 
     public void DeathCheck()
@@ -52,6 +61,7 @@ public class Enemy : MonoBehaviour
         float horizontalGap = transform.position.x - player.transform.position.x;
         float verticalGap = transform.position.y - player.transform.position.y;
         Vector3 destination = new Vector3();
+        enemyWalkFeedback.PlayFeedbacks();
 
 
         if (horizontalGap == 0)
@@ -141,6 +151,7 @@ public class Enemy : MonoBehaviour
         gM.breathSys.ChangeBreathPt(-1);
         gM.breathSys.underAttack = true;
         gM.breathSys.DetectOutOfBreath();
+        gotHitFeedback.PlayFeedbacks();
     }
 
     public void DetectPlayerAfterMove()
@@ -165,3 +176,4 @@ public class Enemy : MonoBehaviour
         }
     }
 }
+

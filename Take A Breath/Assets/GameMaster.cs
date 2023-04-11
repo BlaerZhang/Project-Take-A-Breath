@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class GameMaster : MonoBehaviour
 {
@@ -59,6 +60,7 @@ public class GameMaster : MonoBehaviour
     {
         loseUI.SetActive(false);
         enemySys.ClearEnemies();
+        skillSys.ClearBloods();
         GameStart();
     }
 
