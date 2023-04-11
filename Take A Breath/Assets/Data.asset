@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a6bcc90689a554ca89d83bdce551ad, type: 3}
   m_Name: Data
   m_EditorClassIdentifier: 
-  firePt: 0
-  waterPt: 0
-  bugPt: 0
+  firePt: 3
+  waterPt: 3
+  bugPt: 3

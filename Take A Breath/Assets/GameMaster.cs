@@ -5,15 +5,33 @@ using UnityEngine;
 public class GameMaster : MonoBehaviour
 {
     private static GameMaster instance;
+    public EnemySystem enemySys;
+    public SkillSys skillSys;
+    public BreathSys breathSys;
+    public Controller control;
 
     public bool ifLose = false;
     public bool ifTakingControl = false;
 
+    public int level;
+
     public GameObject loseUI;
+    public GameObject player;
 
     private void Awake()
     {
         instance = this;
+        GameStart();
+    }
+
+    public void GameStart()
+    {
+        level = 1;
+        player.transform.position = Vector3.zero;
+        enemySys.GenerateNewEnemy();
+        breathSys.InitializeBreathPt();
+        ifTakingControl = false;
+
     }
 
     public static GameMaster Instance()
@@ -36,6 +54,8 @@ public class GameMaster : MonoBehaviour
     public void OnClickRestart()
     {
         loseUI.SetActive(false);
+        enemySys.ClearEnemies();
+        GameStart();
     }
 
     private void Update()

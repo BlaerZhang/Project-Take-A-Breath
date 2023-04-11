@@ -1,22 +1,50 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class Enemy : MonoBehaviour
 {
+    public GameMaster gM;
     public bool ifNextToPlayer = false;
     public GameObject player;
-    public BreathSys breathSys;
+    public Vector3 relativePosOfPL;
+    public int healthPt;
+    public TextMeshProUGUI healthTMpro;
+    public int indexInScene;
 
     public void Awake()
     {
-        GenerateInitialPositionRandomly();
+        gM = GameMaster.Instance();
+        player = gM.player;
     }
 
-    public void GenerateInitialPositionRandomly()
+    public void GetAttackDmg(int dmg)
     {
-        int randomPosX = Random.Range(-3, 3);
-        transform.position = new Vector3(randomPosX, 3, 0);
+        healthPt -= dmg;
+        UpdateHealthUI();
+        DeathCheck();
+    }
+
+    public void DeathCheck()
+    {
+        if(healthPt <= 0 )
+        {
+            gM.enemySys.enemiesInScene.RemoveAt(indexInScene);
+            gM.enemySys.OrganizeEnemiesInScene();
+            Destroy(this.gameObject);
+        }
+    }
+
+    public void UpdateHealthUI()
+    {
+        healthTMpro.text = healthPt.ToString();
+    }
+
+    public void DetectRelativePosPL()
+    {
+        relativePosOfPL = transform.position - player.transform.position;
     }
 
     public void Move()
@@ -53,28 +81,22 @@ public class Enemy : MonoBehaviour
             }
 
         }
-
+        
         DetectPlayerAfterMove();
     }
 
     public void Attack()
     {
         Debug.Log("Player lose 1 HP");
-        breathSys.ChangeBreathPt(-1);
-        breathSys.underAttack = true;
-        breathSys.DetectOutOfBreath();
+        gM.breathSys.ChangeBreathPt(-1);
+        gM.breathSys.underAttack = true;
+        gM.breathSys.DetectOutOfBreath();
     }
 
     public void DetectPlayerAfterMove()
     {
-        float verticalGap = Mathf.Abs(transform.position.y - player.transform.position.y);
-        float horizontalGap = Mathf.Abs(transform.position.x - player.transform.position.x);
-
-        if(verticalGap == 0 && horizontalGap == 1)
-        {
-            ifNextToPlayer = true;
-        }
-        else if(verticalGap == 1 && horizontalGap == 0)
+        DetectRelativePosPL();
+        if(Mathf.Abs(relativePosOfPL.x) == 0 && Mathf.Abs(relativePosOfPL.y) == 1 || Mathf.Abs(relativePosOfPL.y) == 0 && Mathf.Abs(relativePosOfPL.x)==1)
         {
             ifNextToPlayer = true;
         }
@@ -84,6 +106,7 @@ public class Enemy : MonoBehaviour
     {
         if (ifNextToPlayer)
         {
+            Debug.Log("Enemy is attacking");
             Attack();
         }
         else

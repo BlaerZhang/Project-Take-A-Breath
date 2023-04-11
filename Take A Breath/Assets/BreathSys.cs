@@ -18,8 +18,6 @@ public class BreathSys : MonoBehaviour
     private void Awake()
     {
         SettingDefault();
-        InitializeBreathPt();
-        UpdateBreathPtUI();
     }
 
     private void Update()
@@ -36,9 +34,10 @@ public class BreathSys : MonoBehaviour
 
     public void InitializeBreathPt()
     {
-        breathDataSCO.firePt = 0;
-        breathDataSCO.waterPt = 0;
-        breathDataSCO.bugPt = 0;
+        breathDataSCO.firePt = 3;
+        breathDataSCO.waterPt = 3;
+        breathDataSCO.bugPt = 3;
+        UpdateBreathPtUI();
     }
 
     public void ChangeBreath()

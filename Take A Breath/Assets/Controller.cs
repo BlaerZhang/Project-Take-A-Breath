@@ -4,45 +4,73 @@ using UnityEngine;
 
 public class Controller : MonoBehaviour
 {
-    public BreathSys breathSys;
-    public Enemy enemy;
+    public GameMaster gM;
+
+    private void Awake()
+    {
+        gM = GameMaster.Instance();
+    }
 
     // Update is called once per frame
     void Update()
     {
-        if (!GameMaster.Instance().ifTakingControl)
+        if (!gM.ifTakingControl)
         {
             if (Input.GetKeyDown(KeyCode.C))
             {
-                breathSys.ChangeBreath();
+                gM.breathSys.ChangeBreath();
             }
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                enemy.Think();
+                gM.enemySys.EnemiesThinking();
             }
 
             if (Input.GetKey(KeyCode.Space))
             {
-                if (breathSys.breathTime < 1)
+                if (gM.breathSys.breathTime < 1)
                 {
-                    breathSys.breathTime += Time.deltaTime;
+                    gM.breathSys.breathTime += Time.deltaTime;
                 }
                 else
                 {
-                    breathSys.breathTime = 0;
-                    if (!breathSys.underAttack)
+                    gM.enemySys.EnemiesThinking();
+
+                    gM.breathSys.breathTime = 0;
+                    if (!gM.breathSys.underAttack)
                     {
-                        breathSys.ChangeBreathPt(1);
+                        gM.breathSys.ChangeBreathPt(1);
                     }
-                    enemy.Think();
+                    else
+                    {
+                        gM.breathSys.underAttack = false;
+                    }
+
+                    //gM.enemySys.RandomlyRespawnEenmy();
                 }
             }
             else
             {
-                if (breathSys.breathTime < 1)
+                if (gM.breathSys.breathTime < 1)
                 {
-                    breathSys.breathTime = 0;
+                    gM.breathSys.breathTime = 0;
                 }
+            }
+
+            if (Input.GetKeyDown(KeyCode.W))
+            {
+                gM.skillSys.Action("W");
+            }
+            else if (Input.GetKeyDown(KeyCode.A))
+            {
+                gM.skillSys.Action("A");
+            }
+            else if (Input.GetKeyDown(KeyCode.D))
+            {
+                gM.skillSys.Action("D");
+            }
+            else if (Input.GetKeyDown(KeyCode.S))
+            {
+                gM.skillSys.Action("S");
             }
         }
         
