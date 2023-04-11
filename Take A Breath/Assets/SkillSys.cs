@@ -56,6 +56,16 @@ public class SkillSys : MonoBehaviour
             target.GetAttackDmg(2);
             breathSys.breathDataSCO.firePt -= 1;
         }
+        else if(breathSys.activeBreathIndex == 1)
+        {
+            target.GetAttackDmg(2);
+            breathSys.breathDataSCO.waterPt -= 1;
+        }
+        else if (breathSys.activeBreathIndex == 2)
+        {
+            target.GetAttackDmg(2);
+            breathSys.breathDataSCO.bugPt -= 1;
+        }
 
         breathSys.DetectOutOfBreath();
 
