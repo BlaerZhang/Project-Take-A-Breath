@@ -39,6 +39,7 @@ public class GameMaster : MonoBehaviour
         level = 10;
         breathScore = 0;
         player.transform.position = Vector3.zero;
+        control.mainCamera.transform.localPosition = Vector3.zero;
         enemySys.GenerateNewEnemy();
         breathSys.InitializeBreathPt();
         ifTakingControl = false;

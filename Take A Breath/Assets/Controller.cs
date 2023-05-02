@@ -23,9 +23,12 @@ public class Controller : MonoBehaviour
         breathFeedback = GameObject.Find("BreathFeedback").GetComponent<MMF_Player>();
         switchFeedback = GameObject.Find("SwitchFeedback").GetComponent<MMF_Player>();
         gotHitFeedback = GameObject.Find("GotHitFeedback").GetComponent<MMF_Player>();
-        cameraOriginalPos = mainCamera.transform.position;
     }
 
+    private void Start()
+    {
+        cameraOriginalPos = mainCamera.transform.position;
+    }
     public void CameraMove(Vector3 direction)
     {
         cameraTargetDirection = direction;

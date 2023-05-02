@@ -48,6 +48,16 @@ public class SkillSys : MonoBehaviour
         return false;
     }
 
+    public void DetectPreviousFacingEnemy()
+    {
+        target.DetectPlayerAfterMove();
+
+        if (!target.ifNextToPlayer)
+        {
+            target = null;
+        }
+    }
+
     public void Action(string direction)
     {
         if (DetectEnemy(direction))

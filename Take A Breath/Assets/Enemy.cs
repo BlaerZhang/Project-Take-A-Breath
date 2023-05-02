@@ -64,8 +64,14 @@ public class Enemy : MonoBehaviour
 
     public void GetPushed()
     {
+
+        if (!isIced)
+        {
+            PushCheck();
+        }
+
         GetAttackDmg(1);
-        PushCheck();
+
 
     }
 
@@ -83,6 +89,7 @@ public class Enemy : MonoBehaviour
         }
 
         transform.position += relativePosOfPL;
+        gM.skillSys.DetectPreviousFacingEnemy();
     }
 
     public void DeathCheck()
@@ -91,7 +98,16 @@ public class Enemy : MonoBehaviour
         {
             gM.enemySys.enemiesInScene.RemoveAt(indexInScene);
             gM.enemySys.OrganizeEnemiesInScene();
+            DeathTargetCheck();
             Destroy(this.gameObject);
+        }
+    }
+
+    public void DeathTargetCheck()
+    {
+        if(gM.skillSys.target == this)
+        {
+            gM.skillSys.target = null;
         }
     }
 
