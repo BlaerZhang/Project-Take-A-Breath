@@ -61,7 +61,7 @@ public class Enemy : MonoBehaviour
         float horizontalGap = transform.position.x - player.transform.position.x;
         float verticalGap = transform.position.y - player.transform.position.y;
         Vector3 destination = new Vector3();
-        enemyWalkFeedback.PlayFeedbacks();
+        
 
 
         if (horizontalGap == 0)
@@ -127,6 +127,7 @@ public class Enemy : MonoBehaviour
         else
         {
             transform.position = destination;
+            enemyWalkFeedback.PlayFeedbacks();
         }
 
         DetectPlayerAfterMove();

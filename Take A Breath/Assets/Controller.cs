@@ -7,7 +7,6 @@ public class Controller : MonoBehaviour
 {
     public GameMaster gM;
     private MMF_Player breathFeedback;
-    private MMF_Player switchFeedback;
     private MMF_Player gotHitFeedback;
 
 
@@ -16,7 +15,6 @@ public class Controller : MonoBehaviour
     {
         gM = GameMaster.Instance();
         breathFeedback = GameObject.Find("BreathFeedback").GetComponent<MMF_Player>();
-        switchFeedback = GameObject.Find("SwitchFeedback").GetComponent<MMF_Player>();
         gotHitFeedback = GameObject.Find("GotHitFeedback").GetComponent<MMF_Player>();
     }
 
@@ -34,7 +32,6 @@ public class Controller : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.C))
             {
                 gM.breathSys.ChangeBreath();
-                switchFeedback.PlayFeedbacks();
             }
 
             if (Input.GetKeyDown(KeyCode.Space))

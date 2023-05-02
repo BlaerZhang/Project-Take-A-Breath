@@ -60,7 +60,7 @@ public class GameMaster : MonoBehaviour
     {
         loseUI.SetActive(false);
         enemySys.ClearEnemies();
-        skillSys.ClearBloods();
+        // skillSys.ClearBloods();
         GameStart();
     }
 
