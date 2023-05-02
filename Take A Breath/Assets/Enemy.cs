@@ -18,11 +18,17 @@ public class Enemy : MonoBehaviour
     private MMF_Player hitEnemyFeedback;
     private MMF_Player gotHitFeedback;
 
+    public SpriteRenderer fireCircle;
+
+    public bool isIced;
+    public bool isFired;
+    public bool isFireProtected;
 
     public void Awake()
     {
         gM = GameMaster.Instance();
         player = gM.player;
+        UpdateHealthUI();
         enemyWalkFeedback = GameObject.Find("EnemyWalkFeedback").GetComponent<MMF_Player>();
         hitEnemyFeedback = GameObject.Find("HitEnemyFeedback").GetComponent<MMF_Player>();
         gotHitFeedback = GameObject.Find("GotHitFeedback").GetComponent<MMF_Player>();
@@ -30,10 +36,53 @@ public class Enemy : MonoBehaviour
 
     public void GetAttackDmg(int dmg)
     {
-        healthPt -= dmg;
+        if (isIced)
+        {
+            healthPt -= dmg * 2;
+            isIced = false;
+        }
+        else
+        {
+            healthPt -= dmg;
+        }
         UpdateHealthUI();
         DeathCheck();
         hitEnemyFeedback.PlayFeedbacks();
+    }
+
+    public void GetIced()
+    {
+        GetAttackDmg(1);
+        isIced = true;
+    }
+
+    public void GetFired()
+    {
+        GetAttackDmg(1);
+        isFired = true;
+    }
+
+    public void GetPushed()
+    {
+        GetAttackDmg(1);
+        PushCheck();
+
+    }
+
+    public void PushCheck()
+    {
+        foreach(Enemy unit in gM.enemySys.enemiesInScene)
+        {
+            if(unit.transform.position == this.transform.position + relativePosOfPL)
+            {
+                //检测到被推向的位置已有其他单位，双方承受伤害
+                GetAttackDmg(1);
+                unit.GetAttackDmg(1);
+                return;
+            }
+        }
+
+        transform.position += relativePosOfPL;
     }
 
     public void DeathCheck()
@@ -122,7 +171,7 @@ public class Enemy : MonoBehaviour
 
         if (DetectIfOverlap(destination))
         {
-            Move();
+            //Move();
         }
         else
         {
@@ -161,18 +210,66 @@ public class Enemy : MonoBehaviour
         {
             ifNextToPlayer = true;
         }
+        else
+        {
+            ifNextToPlayer = false;
+        }
     }
 
     public void Think()
     {
-        if (ifNextToPlayer)
+        if (!isIced)
         {
-            Debug.Log("Enemy is attacking");
-            Attack();
+            if (isFired)
+            {
+                Burining();
+            }
+            else if (isFireProtected)
+            {
+                isFireProtected = false;
+            }
+
+            if (ifNextToPlayer)
+            {
+                Debug.Log("Enemy is attacking");
+                Attack();
+            }
+            else
+            {
+                Move();
+            }
+        }
+
+    }
+
+    public void Burining()
+    {
+        foreach(Enemy unit in gM.enemySys.enemiesInScene)
+        {
+            Vector3 gap = unit.transform.position - this.transform.position;
+            if(gap.magnitude == 1)
+            {
+                if (!unit.isFireProtected)
+                {
+                    unit.isFired = true;
+                }
+            }
+        }
+
+        GetAttackDmg(1);
+        isFired = false;
+        isFireProtected = true;
+    }
+
+    private void Update()
+    {
+        if (isFired)
+        {
+            fireCircle.enabled = true;
         }
         else
         {
-            Move();
+            fireCircle.enabled = false;
         }
     }
 }

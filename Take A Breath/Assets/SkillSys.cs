@@ -5,11 +5,16 @@ using UnityEngine;
 
 public class SkillSys : MonoBehaviour
 {
+    public GameMaster gM;
     public Enemy target;
     public Vector3 faceDirection;
     public BreathSys breathSys;
     public GameObject bloodstain;
 
+    private void Awake()
+    {
+        gM = GameMaster.Instance();
+    }
     public bool DetectEnemy(string direction)
     {
         if(direction == "W")
@@ -50,23 +55,55 @@ public class SkillSys : MonoBehaviour
             AttackWithBreath();
             InstantiateBloodstain(direction);
         }
+        else
+        {
+            PlayerMove(direction);
+        }
+    }
+
+    public void PlayerMove(string direction)
+    {
+        Vector3 cameraDirection = Vector3.zero;
+
+        if(direction == "W")
+        {
+            cameraDirection = Vector3.up;
+        }
+        else if(direction == "S")
+        {
+            cameraDirection = Vector3.down;
+        }
+        else if(direction == "A")
+        {
+            cameraDirection = Vector3.left;
+        }
+        else if(direction == "D")
+        {
+            cameraDirection = Vector3.right;
+        }
+
+        gM.playerTrans.position += cameraDirection;
+        gM.stepScore += 1;
+
+        gM.control.CameraMove(cameraDirection);
+
     }
 
     public void AttackWithBreath()
     {
         if(breathSys.activeBreathIndex == 0)
         {
-            target.GetAttackDmg(2);
+            target.GetFired();
             breathSys.breathDataSCO.firePt -= 1;
         }
         else if(breathSys.activeBreathIndex == 1)
         {
-            target.GetAttackDmg(2);
+            target.GetIced();
             breathSys.breathDataSCO.waterPt -= 1;
         }
         else if (breathSys.activeBreathIndex == 2)
         {
-            target.GetAttackDmg(2);
+            target.GetPushed();
             breathSys.breathDataSCO.bugPt -= 1;
         }
 

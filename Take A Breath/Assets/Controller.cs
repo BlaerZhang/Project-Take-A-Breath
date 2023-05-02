@@ -9,6 +9,11 @@ public class Controller : MonoBehaviour
     private MMF_Player breathFeedback;
     private MMF_Player switchFeedback;
     private MMF_Player gotHitFeedback;
+    public Camera mainCamera;
+    public Vector3 cameraTargetDirection;
+    public Vector3 cameraOriginalPos;
+    public bool onCameraMove = false;
+    public float cameraTimer;
 
 
 
@@ -18,11 +23,34 @@ public class Controller : MonoBehaviour
         breathFeedback = GameObject.Find("BreathFeedback").GetComponent<MMF_Player>();
         switchFeedback = GameObject.Find("SwitchFeedback").GetComponent<MMF_Player>();
         gotHitFeedback = GameObject.Find("GotHitFeedback").GetComponent<MMF_Player>();
+        cameraOriginalPos = mainCamera.transform.position;
     }
 
+    public void CameraMove(Vector3 direction)
+    {
+        cameraTargetDirection = direction;
+        onCameraMove = true;
+    }
     // Update is called once per frame
     void Update()
     {
+        if (onCameraMove)
+        {
+            cameraTimer += Time.deltaTime;
+            mainCamera.transform.localPosition = cameraOriginalPos + cameraTargetDirection * Mathf.Lerp(0, 1, cameraTimer);
+            if(cameraTimer >= 1)
+            {
+                onCameraMove = false;
+                cameraTimer = 0;
+                cameraOriginalPos = mainCamera.transform.localPosition;
+                gM.enemySys.isAfterPLMove = true;
+            }
+        }
+        else
+        {
+
+        }
+
         if (gotHitFeedback.IsPlaying)
         {
             breathFeedback.SkipToTheEnd();
@@ -80,23 +108,26 @@ public class Controller : MonoBehaviour
                     gM.breathSys.breathTime = 0;
                 }
             }
+            if (!onCameraMove)
+            {
+                if (Input.GetKeyDown(KeyCode.W))
+                {
+                    gM.skillSys.Action("W");
+                }
+                else if (Input.GetKeyDown(KeyCode.A))
+                {
+                    gM.skillSys.Action("A");
+                }
+                else if (Input.GetKeyDown(KeyCode.D))
+                {
+                    gM.skillSys.Action("D");
+                }
+                else if (Input.GetKeyDown(KeyCode.S))
+                {
+                    gM.skillSys.Action("S");
+                }
+            }
 
-            if (Input.GetKeyDown(KeyCode.W))
-            {
-                gM.skillSys.Action("W");
-            }
-            else if (Input.GetKeyDown(KeyCode.A))
-            {
-                gM.skillSys.Action("A");
-            }
-            else if (Input.GetKeyDown(KeyCode.D))
-            {
-                gM.skillSys.Action("D");
-            }
-            else if (Input.GetKeyDown(KeyCode.S))
-            {
-                gM.skillSys.Action("S");
-            }
         }
 
     }
