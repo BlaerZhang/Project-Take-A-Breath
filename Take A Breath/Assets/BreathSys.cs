@@ -20,6 +20,10 @@ public class BreathSys : MonoBehaviour
     private MMF_Player iceSwitchFeedback;
     private MMF_Player windSwitchFeedback;
 
+    public int initialFire;
+    public int initialIce;
+    public int initialWind;
+
     private void Awake()
     {
         SettingDefault();
@@ -38,14 +42,13 @@ public class BreathSys : MonoBehaviour
     {
         activeBreathIndex = 0;
         ActiveBreathByIndex(0);
-
     }
 
     public void InitializeBreathPt()
     {
-        breathDataSCO.firePt = 3;
-        breathDataSCO.waterPt = 3;
-        breathDataSCO.bugPt = 3;
+        breathDataSCO.firePt = initialFire;
+        breathDataSCO.waterPt = initialIce;
+        breathDataSCO.bugPt = initialWind;
         UpdateBreathPtUI();
     }
 

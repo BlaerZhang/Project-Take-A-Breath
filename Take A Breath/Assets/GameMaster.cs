@@ -11,28 +11,36 @@ public class GameMaster : MonoBehaviour
     public SkillSys skillSys;
     public BreathSys breathSys;
     public Controller control;
+    public Transform playerTrans;
+    
 
     public bool ifLose = false;
     public bool ifTakingControl = false;
 
     public int level;
     public int breathScore = 0;
+    public int stepScore = 0;
 
     public GameObject loseUI;
-    public TextMeshProUGUI scoreTMP;
+    public TextMeshProUGUI breathIndexTMP;
+    public TextMeshProUGUI stepIndexTMP;
     public GameObject player;
 
     private void Awake()
     {
         instance = this;
+    }
+    private void Start()
+    {
         GameStart();
     }
-
     public void GameStart()
     {
         level = 10;
         breathScore = 0;
+        stepScore = 0;
         player.transform.position = Vector3.zero;
+        control.mainCamera.transform.localPosition = Vector3.zero;
         enemySys.GenerateNewEnemy();
         breathSys.InitializeBreathPt();
         ifTakingControl = false;
@@ -60,6 +68,7 @@ public class GameMaster : MonoBehaviour
     {
         loseUI.SetActive(false);
         enemySys.ClearEnemies();
+        control.ResetCam();
         // skillSys.ClearBloods();
         GameStart();
     }
@@ -68,15 +77,27 @@ public class GameMaster : MonoBehaviour
     {
         if(breathScore < 10)
         {
-            scoreTMP.text = "<link=\"pulse\">" + "0" + breathScore.ToString() + "</link>";
+            breathIndexTMP.text = "<link=\"pulse\">" + "0" + breathScore.ToString() + "</link>";
         }
         else
         {
-            scoreTMP.text = "<link=\"pulse\">" + breathScore.ToString() + "</link>";
+            breathIndexTMP.text = "<link=\"pulse\">" + breathScore.ToString() + "</link>";
         }
+
+        if (stepScore < 10)
+        {
+            stepIndexTMP.text = "<link=\"pulse\">" + "0" + stepScore.ToString() + "</link>";
+        }
+        else
+        {
+            stepIndexTMP.text = "<link=\"pulse\">" + stepScore.ToString() + "</link>";
+        }
+
+
         if (ifLose)
         {
             GameOverLose();
         }
+
     }
 }

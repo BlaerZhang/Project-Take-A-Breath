@@ -15,25 +15,99 @@ public class Enemy : MonoBehaviour
     public TextMeshProUGUI healthTMpro;
     public int indexInScene;
     private MMF_Player enemyWalkFeedback;
-    private MMF_Player hitEnemyFeedback;
     private MMF_Player gotHitFeedback;
+    private MMF_Player fireHitEnemyFeedback;
+    private MMF_Player iceHitEnemyFeedback;
+    private MMF_Player windHitEnemyFeedback;
+    private MMF_Player breakIceFeedback;
 
+    public SpriteRenderer fireCircle;
+    public SpriteRenderer iceSprite;
+    public ParticleSystem fireParticle;
+
+    public bool isIced;
+    public bool isFired;
+    public bool isFireProtected;
+    public bool isFireParticlePlaying = false;
 
     public void Awake()
     {
         gM = GameMaster.Instance();
         player = gM.player;
+        UpdateHealthUI();
         enemyWalkFeedback = GameObject.Find("EnemyWalkFeedback").GetComponent<MMF_Player>();
-        hitEnemyFeedback = GameObject.Find("HitEnemyFeedback").GetComponent<MMF_Player>();
         gotHitFeedback = GameObject.Find("GotHitFeedback").GetComponent<MMF_Player>();
+        fireHitEnemyFeedback = GameObject.Find("FireHitEnemyFeedback").GetComponent<MMF_Player>();
+        iceHitEnemyFeedback = GameObject.Find("IceHitEnemyFeedback").GetComponent<MMF_Player>();
+        windHitEnemyFeedback = GameObject.Find("WindHitEnemyFeedback").GetComponent<MMF_Player>();
+        breakIceFeedback = GameObject.Find("BreakIceFeedback").GetComponent<MMF_Player>();
     }
 
     public void GetAttackDmg(int dmg)
     {
-        healthPt -= dmg;
+        if (isIced)
+        {
+            healthPt -= dmg * 2;
+            isIced = false;
+            
+            breakIceFeedback.transform.position = gameObject.transform.position;
+            breakIceFeedback.PlayFeedbacks();
+        }
+        else
+        {
+            healthPt -= dmg;
+        }
         UpdateHealthUI();
         DeathCheck();
-        hitEnemyFeedback.PlayFeedbacks();
+    }
+
+    public void GetIced()
+    {
+        GetAttackDmg(1);
+        isIced = true;
+        
+        iceHitEnemyFeedback.transform.position = gameObject.transform.position;
+        iceHitEnemyFeedback.PlayFeedbacks();
+    }
+
+    public void GetFired()
+    {
+        GetAttackDmg(1);
+        isFired = true;
+
+        fireHitEnemyFeedback.transform.position = gameObject.transform.position;
+        fireHitEnemyFeedback.PlayFeedbacks();
+    }
+
+    public void GetPushed()
+    {
+
+        if (!isIced)
+        {
+            PushCheck();
+        }
+
+        GetAttackDmg(1);
+
+        windHitEnemyFeedback.transform.position = gameObject.transform.position;
+        windHitEnemyFeedback.PlayFeedbacks();
+    }
+
+    public void PushCheck()
+    {
+        foreach(Enemy unit in gM.enemySys.enemiesInScene)
+        {
+            if(unit.transform.position == this.transform.position + relativePosOfPL)
+            {
+                //��⵽�������λ������������λ��˫�������˺�
+                GetAttackDmg(1);
+                unit.GetAttackDmg(1);
+                return;
+            }
+        }
+
+        transform.position += relativePosOfPL;
+        gM.skillSys.DetectPreviousFacingEnemy();
     }
 
     public void DeathCheck()
@@ -42,7 +116,16 @@ public class Enemy : MonoBehaviour
         {
             gM.enemySys.enemiesInScene.RemoveAt(indexInScene);
             gM.enemySys.OrganizeEnemiesInScene();
+            DeathTargetCheck();
             Destroy(this.gameObject);
+        }
+    }
+
+    public void DeathTargetCheck()
+    {
+        if(gM.skillSys.target == this)
+        {
+            gM.skillSys.target = null;
         }
     }
 
@@ -122,7 +205,7 @@ public class Enemy : MonoBehaviour
 
         if (DetectIfOverlap(destination))
         {
-            Move();
+            //Move();
         }
         else
         {
@@ -162,18 +245,77 @@ public class Enemy : MonoBehaviour
         {
             ifNextToPlayer = true;
         }
+        else
+        {
+            ifNextToPlayer = false;
+        }
     }
 
     public void Think()
     {
-        if (ifNextToPlayer)
+        if (!isIced)
         {
-            Debug.Log("Enemy is attacking");
-            Attack();
+            if (isFired)
+            {
+                Burining();
+            }
+            else if (isFireProtected)
+            {
+                isFireProtected = false;
+            }
+
+            if (ifNextToPlayer)
+            {
+                Debug.Log("Enemy is attacking");
+                Attack();
+            }
+            else
+            {
+                Move();
+            }
+        }
+
+    }
+
+    public void Burining()
+    {
+        foreach(Enemy unit in gM.enemySys.enemiesInScene)
+        {
+            Vector3 gap = unit.transform.position - this.transform.position;
+            if(gap.magnitude == 1)
+            {
+                if (!unit.isFireProtected)
+                {
+                    unit.isFired = true;
+                }
+            }
+        }
+
+        GetAttackDmg(1);
+        isFired = false;
+        isFireProtected = true;
+    }
+
+    private void Update()
+    {
+        if (isFired && !isFireParticlePlaying)
+        {
+            fireParticle.Play();
+            isFireParticlePlaying = true;
+        }
+        else if (!isFired)
+        {
+            fireParticle.Stop();
+            isFireParticlePlaying = false;
+        }
+
+        if (isIced)
+        {
+            iceSprite.enabled = true;
         }
         else
         {
-            Move();
+            iceSprite.enabled = false;
         }
     }
 }

@@ -8,6 +8,15 @@ public class EnemySystem : MonoBehaviour
 
     public List<Enemy> enemyPrefabs;
 
+    public GameMaster gM;
+
+    public bool isAfterPLMove = false;
+
+    private void Awake()
+    {
+        gM = GameMaster.Instance();
+    }
+
     public void OrganizeEnemiesInScene()
     {
         for(int index = 0; index < enemiesInScene.Count; index++)
@@ -50,7 +59,7 @@ public class EnemySystem : MonoBehaviour
 
     public Vector3 GetInitialPosition()
     {
-        Vector3 initialPos = Vector3.zero;  
+        Vector3 initialPos = gM.playerTrans.position;  
         //First, determine which side it is coming from. (N E S W)
         int sideIndex = Random.Range(0, 4);
         //Then, determine which tile it is generated on that side from -3 to 3
@@ -96,5 +105,27 @@ public class EnemySystem : MonoBehaviour
             Destroy(unit.gameObject);
         }
         enemiesInScene = new List<Enemy>();
+    }
+
+
+    public void UpdateEnemiesRelativePos()
+    {
+        foreach(Enemy unit in enemiesInScene)
+        {
+            unit.DetectPlayerAfterMove();
+        }
+    }
+
+    private void Update()
+    {
+        if (isAfterPLMove)
+        {
+            isAfterPLMove = false;
+            UpdateEnemiesRelativePos();
+            EnemiesThinking();
+            GenerateNewEnemy();
+            UpdateEnemiesRelativePos();
+
+        }
     }
 }
